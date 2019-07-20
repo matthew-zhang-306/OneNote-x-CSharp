@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29102.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneNote-x-CSharp", "OneNote-x-CSharp\OneNote-x-CSharp.csproj", "{DE72A2E7-6ADE-4859-9E07-679C757EBEB9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DE72A2E7-6ADE-4859-9E07-679C757EBEB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE72A2E7-6ADE-4859-9E07-679C757EBEB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE72A2E7-6ADE-4859-9E07-679C757EBEB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE72A2E7-6ADE-4859-9E07-679C757EBEB9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3AB8DD51-EE3F-423D-9229-026A4CCDD6C5}
+	EndGlobalSection
+EndGlobal
