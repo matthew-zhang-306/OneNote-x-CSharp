@@ -12,6 +12,13 @@ namespace OneNote_x_CSharp
     {
         static void Main(string[] args)
         {
+            new OneNote();
+
+            // Test();
+        }
+
+        static void Test()
+        {
             /*
              * Load XML from OneNote data 
              * This works
