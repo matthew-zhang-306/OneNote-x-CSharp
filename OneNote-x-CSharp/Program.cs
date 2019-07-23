@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Xml;
 using Microsoft.Office.Interop.OneNote;
@@ -12,32 +11,13 @@ namespace OneNote_x_CSharp
     {
         static void Main(string[] args)
         {
-            new OneNote();
+            new Main();
 
             // Test();
         }
 
         static void Test()
         {
-            /*
-             * Load XML from OneNote data 
-             * This works
-             */
-            String strXML;
-            Application app = new Application();
-
-            app.GetHierarchy(null, HierarchyScope.hsPages, out strXML);
-            // Console.WriteLine(strXML);
-
-            XmlDocument xml = new XmlDocument();
-            xml.LoadXml(strXML);
-            XmlElement hierarchy = xml.DocumentElement;
-
-            XmlNamespaceManager nsmgr = new XmlNamespaceManager(xml.NameTable);
-            nsmgr.AddNamespace("one", "http://schemas.microsoft.com/office/onenote/2013/onenote");
-
-            Console.WriteLine(hierarchy.FirstChild.InnerXml);
-
             string path = Directory.GetCurrentDirectory();
             string combinedPath = Path.Combine(Directory.GetCurrentDirectory(), "dummy\\Dummy.txt");
             string configPath = Path.Combine(Directory.GetCurrentDirectory(), "dummy\\config.txt");
