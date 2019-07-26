@@ -8,5 +8,9 @@ namespace OneNote_x_CSharp
 {
     public class Uploader
     {
+        public Uploader()
+        {
+
+        }
     }
 }
