@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -14,5 +15,7 @@ namespace OneNote_x_CSharp
 
         public static bool IsWeekday(string str) => new List<string> { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" }.Contains(str.Capitalized());
         public static bool IsSubject(string str) => Notebook.AllSubjects.Contains(str.Capitalized());
+
+        public static string ToString(this IEnumerable<string> list) => "[ " + string.Join(", ", list) + " ]";
     }
 }

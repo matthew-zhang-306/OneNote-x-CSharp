@@ -9,7 +9,8 @@ namespace OneNote_x_CSharp
     {
         static void Main(string[] args)
         {
-            new Main();
+            Main m = new Main();
+            m.DoFullReport();
 
             // Test();
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using Microsoft.Office.Interop.OneNote;
 
@@ -9,7 +10,7 @@ namespace OneNote_x_CSharp
     {
         public static XmlNamespaceManager nsmgr { get; private set; }
 
-        List<Notebook> notebooks;
+        public List<Notebook> Notebooks { get; private set; }
 
         public Main()
         {
@@ -34,13 +35,20 @@ namespace OneNote_x_CSharp
 
         void LoadNotebooks(XmlDocument xml)
         {
-            notebooks = new List<Notebook>();
+            Notebooks = new List<Notebook>();
 
             foreach (XmlNode notebookNode in xml.SelectNodes("//one:Notebook", nsmgr))
             {
-                notebooks.Add(new Notebook(notebookNode));
-                Console.WriteLine(notebooks[notebooks.Count - 1].Name);
+                Notebooks.Add(new Notebook(notebookNode));
             }
+        }
+
+        public void DoFullReport()
+        {
+            string report = string.Join("\n\n", Notebooks.Select(notebook => notebook.FullReport()));
+
+            Console.WriteLine(report);
+            // write to file
         }
     }
 }
