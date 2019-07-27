@@ -37,7 +37,7 @@ namespace OneNote_x_CSharp
 
             foreach (XmlNode sectionNode in notebookNode.SelectNodes("//one:Section", Main.nsmgr))
             {
-                Sections.Add(new Section(sectionNode));
+                Sections.Add(new Section(sectionNode, this));
             }
         }
 

@@ -12,6 +12,12 @@ namespace OneNote_x_CSharp
             Main m = new Main();
             m.DoFullReport();
 
+            // Add more reports
+
+            Uploader uploader = new Uploader();
+
+            // Upload
+
             // Test();
         }
 
