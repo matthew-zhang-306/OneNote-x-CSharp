@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 
 namespace OneNote_x_CSharp
@@ -8,23 +9,48 @@ namespace OneNote_x_CSharp
     {
         public string Name { get; private set; }
 
+        public bool Deleted { get; private set; }
+
+        public string Subject { get; private set; }
+
         public Notebook Notebook { get; private set; }
+
+        public SectionGroup SectionGroup { get; private set; }
 
         public List<Page> Pages { get; private set; }
 
-        public Section(XmlNode sectionNode, Notebook notebook)
-        {
-            Name = sectionNode.Attributes?["name"]?.Value ?? "";
-            Notebook = notebook;
+        public Section(XmlNode sectionNode, Notebook notebook) : this(sectionNode, notebook, null, false) { }
+        public Section(XmlNode sectionNode, SectionGroup sectionGroup) : this(sectionNode, sectionGroup.Notebook, sectionGroup, true) { }
 
-            LoadPages(sectionNode);
+        private Section(XmlNode sectionNode, Notebook notebook, SectionGroup sectionGroup, bool hasSectionGroup)
+        {
+            Name = sectionNode.GetAttribute("name", "untitled");
+            Deleted = sectionNode.GetAttribute("isInRecycleBin", "false") == "true";
+
+            Notebook = notebook;
+            SectionGroup = sectionGroup;
+
+            CheckForSubject(hasSectionGroup);
+
+            if (hasSectionGroup)
+                LoadPages(sectionNode);
+        }
+
+        void CheckForSubject(bool hasSectionGroup)
+        {
+            foreach (string subject in Notebook.AllSubjects.Where(sub => Name.ContainsIgnoreCase(sub)))
+            {
+                Subject = subject;
+                if (!hasSectionGroup)
+                    Notebook.AddSubject(subject);
+            }
         }
 
         void LoadPages(XmlNode sectionNode)
         {
             Pages = new List<Page>();
 
-            foreach (XmlNode pageNode in sectionNode.SelectNodes("//one:Page", Main.nsmgr))
+            foreach (XmlNode pageNode in sectionNode.SelectNodes("./one:Page", Main.nsmgr))
             {
                 Pages.Add(new Page(pageNode, this));
             }
@@ -33,14 +59,10 @@ namespace OneNote_x_CSharp
         public string FullReport()
         {
             // Add actual report
-            return new Indenter("SECTION: " + Name)
-                .AddIndent("  - ")
-                .Append("This is a test")
-                .AddIndent("----")
-                .Append("to see if indents")
-                .Append("work properly")
-                .RemoveIndent()
-                .Append("with many lines")
+            return new Indenter("# Section: " + Name + " #")
+                .AppendSameLine(Deleted ? " (deleted)" : "")
+                .AddIndent()
+                .Append(Pages.Select(page => page.FullReport()))
                 .ToString();
         }
     }

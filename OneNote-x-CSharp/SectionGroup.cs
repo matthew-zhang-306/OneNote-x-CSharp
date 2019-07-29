@@ -15,7 +15,7 @@ namespace OneNote_x_CSharp
 
         public SectionGroup(XmlNode sectionGroupNode, Notebook notebook)
         {
-            Name = sectionGroupNode.Attributes?["name"]?.Value ?? "";
+            Name = sectionGroupNode.GetAttribute("name", "untitled");
             Notebook = notebook;
 
             LoadSections(sectionGroupNode);
@@ -25,16 +25,16 @@ namespace OneNote_x_CSharp
         {
             Sections = new List<Section>();
 
-            foreach (XmlNode sectionNode in sectionGroupNode.SelectNodes("/one:Section", Main.nsmgr))
+            foreach (XmlNode sectionNode in sectionGroupNode.SelectNodes("./one:Section", Main.nsmgr))
             {
-                Sections.Add(new Section(sectionNode, Notebook));
+                Sections.Add(new Section(sectionNode, this));
             }
         }
 
         public string FullReport()
         {
             // Add actual report
-            return new Indenter("GROUP: " + Name)
+            return new Indenter("# SectionGroup: " + Name + " #")
                 .AddIndent()
                 .Append(Sections.Select(section => section.FullReport()))
                 .ToString();

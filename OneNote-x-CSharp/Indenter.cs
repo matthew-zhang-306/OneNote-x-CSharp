@@ -33,14 +33,19 @@ namespace OneNote_x_CSharp
             return this;
         }
 
+        public Indenter AppendSameLine(string lines)
+        {
+            output += lines.Replace("\n", "\n" + fullIndent);
+            return this;
+        }
+
         public Indenter Append(string lines)
         {
             if (output.Length > 0)
                 output += "\n";
             output += fullIndent;
 
-            output += lines.Replace("\n", "\n" + fullIndent);
-            return this;
+            return AppendSameLine(lines);
         }
 
         public Indenter Append(IEnumerable<string> lines)

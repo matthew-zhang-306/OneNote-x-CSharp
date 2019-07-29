@@ -13,7 +13,7 @@ namespace OneNote_x_CSharp
 
         public Page(XmlNode pageNode, Section section)
         {
-            Name = pageNode.Attributes?["name"]?.Value ?? "";
+            Name = pageNode.GetAttribute("name", "");
             Section = section;
 
             // Add more functionality
@@ -22,7 +22,8 @@ namespace OneNote_x_CSharp
         public string FullReport()
         {
             // Add actual report
-            return Name;
+            return new Indenter(Name.PadRight(40) + "(date)")
+                .ToString();
         }
     }
 }

@@ -19,9 +19,7 @@ namespace OneNote_x_CSharp
 
         public Notebook(XmlNode notebookNode)
         {
-            Name = notebookNode.Attributes?["name"]?.Value ?? "";
-            if (Name == "Sai")
-                Console.WriteLine(notebookNode.Print());
+            Name = notebookNode.GetAttribute("name", "untitled");
 
             LoadSections(notebookNode);
             LoadSectionGroups(notebookNode);
@@ -40,7 +38,7 @@ namespace OneNote_x_CSharp
         {
             Sections = new List<Section>();
 
-            foreach (XmlNode sectionNode in notebookNode.SelectNodes("/one:Section", Main.nsmgr))
+            foreach (XmlNode sectionNode in notebookNode.SelectNodes("./one:Section", Main.nsmgr))
             {
                 Sections.Add(new Section(sectionNode, this));
             }
@@ -50,16 +48,17 @@ namespace OneNote_x_CSharp
         {
             SectionGroups = new List<SectionGroup>();
 
-            foreach (XmlNode sectionGroupNode in notebookNode.SelectNodes("/one:SectionGroup", Main.nsmgr))
+            foreach (XmlNode sectionGroupNode in notebookNode.SelectNodes("./one:SectionGroup", Main.nsmgr))
             {
-                SectionGroups.Add(new SectionGroup(sectionGroupNode, this));
+                if (sectionGroupNode.GetAttribute("isRecycleBin") != "true")
+                    SectionGroups.Add(new SectionGroup(sectionGroupNode, this));
             }
         }
 
         public string FullReport()
         {
-            return new Indenter(Name)
-                .AddIndent("    ")
+            return new Indenter(Name + " " + Subjects.Print())
+                .Append("----------------")
                 .Append(SectionGroups.Select(sectionGroup => sectionGroup.FullReport()))
                 .ToString();
         }

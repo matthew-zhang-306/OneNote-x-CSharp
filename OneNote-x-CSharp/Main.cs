@@ -39,7 +39,9 @@ namespace OneNote_x_CSharp
 
             foreach (XmlNode notebookNode in xml.SelectNodes("//one:Notebook", nsmgr))
             {
-                Notebooks.Add(new Notebook(notebookNode));
+                // Ignore QuestLearning's Notebook
+                if (!notebookNode.GetAttribute("name", "QuestLearning").Contains("QuestLearning"))
+                    Notebooks.Add(new Notebook(notebookNode));
             }
         }
 
