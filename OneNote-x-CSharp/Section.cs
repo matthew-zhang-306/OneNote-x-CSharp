@@ -58,9 +58,8 @@ namespace OneNote_x_CSharp
 
         public string FullReport()
         {
-            // Add actual report
             return new Indenter("# Section: " + Name + " #")
-                .AppendSameLine(Deleted ? " (deleted)" : "")
+                .AppendOnSameLine(Deleted ? " (deleted)" : "")
                 .AddIndent()
                 .Append(Pages.Select(page => page.FullReport()))
                 .ToString();

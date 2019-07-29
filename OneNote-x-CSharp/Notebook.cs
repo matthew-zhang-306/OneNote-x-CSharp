@@ -58,7 +58,7 @@ namespace OneNote_x_CSharp
         public string FullReport()
         {
             return new Indenter(Name + " " + Subjects.Print())
-                .Append("----------------")
+                .Append("--------------------------------")
                 .Append(SectionGroups.Select(sectionGroup => sectionGroup.FullReport()))
                 .ToString();
         }

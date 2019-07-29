@@ -49,7 +49,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers.cs" />
+    <Compile Include="Image.cs" />
     <Compile Include="Indenter.cs" />
+    <Compile Include="Ink.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Notebook.cs" />
     <Compile Include="Page.cs" />

@@ -33,7 +33,6 @@ namespace OneNote_x_CSharp
 
         public string FullReport()
         {
-            // Add actual report
             return new Indenter("# SectionGroup: " + Name + " #")
                 .AddIndent()
                 .Append(Sections.Select(section => section.FullReport()))
