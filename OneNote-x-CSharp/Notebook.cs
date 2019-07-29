@@ -15,11 +15,16 @@ namespace OneNote_x_CSharp
 
         public List<Section> Sections { get; private set; }
 
+        public List<SectionGroup> SectionGroups { get; private set; }
+
         public Notebook(XmlNode notebookNode)
         {
             Name = notebookNode.Attributes?["name"]?.Value ?? "";
+            if (Name == "Sai")
+                Console.WriteLine(notebookNode.Print());
 
             LoadSections(notebookNode);
+            LoadSectionGroups(notebookNode);
         }
 
         public void AddSubject(string subject)
@@ -35,9 +40,19 @@ namespace OneNote_x_CSharp
         {
             Sections = new List<Section>();
 
-            foreach (XmlNode sectionNode in notebookNode.SelectNodes("//one:Section", Main.nsmgr))
+            foreach (XmlNode sectionNode in notebookNode.SelectNodes("/one:Section", Main.nsmgr))
             {
                 Sections.Add(new Section(sectionNode, this));
+            }
+        }
+
+        void LoadSectionGroups(XmlNode notebookNode)
+        {
+            SectionGroups = new List<SectionGroup>();
+
+            foreach (XmlNode sectionGroupNode in notebookNode.SelectNodes("/one:SectionGroup", Main.nsmgr))
+            {
+                SectionGroups.Add(new SectionGroup(sectionGroupNode, this));
             }
         }
 
@@ -45,7 +60,7 @@ namespace OneNote_x_CSharp
         {
             return new Indenter(Name)
                 .AddIndent("    ")
-                .Append(Sections.Select(section => section.FullReport()))
+                .Append(SectionGroups.Select(sectionGroup => sectionGroup.FullReport()))
                 .ToString();
         }
     }

@@ -52,6 +52,7 @@
     <Compile Include="Indenter.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Notebook.cs" />
+    <Compile Include="Page.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Section.cs" />
