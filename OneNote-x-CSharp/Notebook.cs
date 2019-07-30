@@ -21,26 +21,20 @@ namespace OneNote_x_CSharp
         {
             Name = notebookNode.GetAttribute("name", "untitled");
 
-            LoadSections(notebookNode);
             LoadSectionGroups(notebookNode);
+            LoadSections(notebookNode);
         }
 
         public void AddSubject(string subject)
         {
             if (Subjects == null)
+            {
                 Subjects = new List<string>();
+            }
 
             if (!Subjects.Contains(subject))
-                Subjects.Add(subject);
-        }
-
-        void LoadSections(XmlNode notebookNode)
-        {
-            Sections = new List<Section>();
-
-            foreach (XmlNode sectionNode in notebookNode.SelectNodes("./one:Section", Main.nsmgr))
             {
-                Sections.Add(new Section(sectionNode, this));
+                Subjects.Add(subject);
             }
         }
 
@@ -51,7 +45,21 @@ namespace OneNote_x_CSharp
             foreach (XmlNode sectionGroupNode in notebookNode.SelectNodes("./one:SectionGroup", Main.nsmgr))
             {
                 if (sectionGroupNode.GetAttribute("isRecycleBin") != "true")
+                {
                     SectionGroups.Add(new SectionGroup(sectionGroupNode, this));
+                }
+            }
+        }
+
+        void LoadSections(XmlNode notebookNode)
+        {
+            Sections = new List<Section>();
+            SectionGroups.ForEach(sectionGroup => Sections.AddRange(sectionGroup.Sections));
+
+            foreach (XmlNode sectionNode in notebookNode.SelectNodes("./one:Section", Main.nsmgr))
+            {
+                // Sections outside of section groups created but not stored, as their sole purpose is to provide data for the notebook
+                new Section(sectionNode, this);
             }
         }
 

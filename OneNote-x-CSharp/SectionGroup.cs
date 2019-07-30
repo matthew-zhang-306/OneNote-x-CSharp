@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace OneNote_x_CSharp
@@ -16,6 +17,11 @@ namespace OneNote_x_CSharp
         public SectionGroup(XmlNode sectionGroupNode, Notebook notebook)
         {
             Name = sectionGroupNode.GetAttribute("name", "untitled");
+            if (Regex.Match(Name, @"^\d+\W* \w+$").Success)
+            {
+                Name = Name.Substring(Name.LastIndexOf(' ') + 1);
+            }
+
             Notebook = notebook;
 
             LoadSections(sectionGroupNode);

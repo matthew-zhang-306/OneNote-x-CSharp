@@ -36,7 +36,9 @@ namespace OneNote_x_CSharp
         public Indenter RemoveIndent()
         {
             if (indents.Count == 0)
+            {
                 return this;
+            }
             
             string indent = indents.Pop();
             fullIndent = fullIndent.Substring(0, fullIndent.Length - indent.Length);

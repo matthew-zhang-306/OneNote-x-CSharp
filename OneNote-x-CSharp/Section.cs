@@ -33,7 +33,9 @@ namespace OneNote_x_CSharp
             CheckForSubject(hasSectionGroup);
 
             if (hasSectionGroup)
+            {
                 LoadPages(sectionNode);
+            }
         }
 
         void CheckForSubject(bool hasSectionGroup)
@@ -42,7 +44,9 @@ namespace OneNote_x_CSharp
             {
                 Subject = subject;
                 if (!hasSectionGroup)
+                {
                     Notebook.AddSubject(subject);
+                }
             }
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using Microsoft.Office.Interop.OneNote;
 
 namespace OneNote_x_CSharp
 {
@@ -11,9 +12,10 @@ namespace OneNote_x_CSharp
         public static string DefaultTag = "none";
 
         public string Name { get; private set; }
+        public string Subject { get { return Section.Subject; } }
 
         public Section Section { get; private set; }
-        public SectionGroup SectionGroup { get; private set; }
+        public SectionGroup SectionGroup { get { return Section.SectionGroup; } }
 
         public List<Image> Images { get; private set; }
         public List<Ink> Inks { get; private set; }
@@ -23,13 +25,78 @@ namespace OneNote_x_CSharp
             Name = pageNode.GetAttribute("name", "");
             Section = section;
 
-            // Add more functionality
+            XmlDocument pageXml = GetPageXml(pageNode);
+
+            // Debug
+            if (Name == "Algebra 1 Evaluating Simple Expressions 1-2")
+            {
+                Console.WriteLine(pageXml.Print());
+            }
+
+            LoadTags(pageXml);
+            LoadDates(pageXml);
+            LoadInks(pageXml);
+            LoadImages(pageXml);
+            SetStatus();
+        }
+
+        XmlDocument GetPageXml(XmlNode pageNode)
+        {
+            string pageXmlStr;
+            new Application().GetPageContent(pageNode.GetAttribute("ID"), out pageXmlStr, PageInfo.piBasic);
+
+            XmlDocument pageXml = new XmlDocument();
+            pageXml.LoadXml(pageXmlStr);
+            return pageXml;
+        }
+
+        void LoadTags(XmlDocument pageXml)
+        {
+
+        }
+
+        void LoadDates(XmlDocument pageXml)
+        {
+
+        }
+
+        void LoadInks(XmlDocument pageXml)
+        {
+            Inks = new List<Ink>();
+
+            foreach (XmlNode inkNode in pageXml.SelectNodes("//one:InkDrawing", Main.nsmgr))
+            {
+                Inks.Add(new Ink(inkNode, false));
+            }
+
+            foreach (XmlNode inkNode in pageXml.SelectNodes("//one:InkWord", Main.nsmgr))
+            {
+                Inks.Add(new Ink(inkNode, true));
+            }
+        }
+
+        void LoadImages(XmlDocument pageXml)
+        {
+            Images = new List<Image>();
+
+            foreach (XmlNode imageNode in pageXml.SelectNodes("//one:Image", Main.nsmgr))
+            {
+                Images.Add(new Image(imageNode, this));
+            }
+        }
+
+        void SetStatus()
+        {
+
         }
 
         public string FullReport()
         {
             // Add actual report
             return new Indenter(Name.PadRight(40) + "(date)")
+                .AddIndent()
+                .Append(Images.Count + " image(s)")
+                .Append(Inks.Count + " ink(s)")
                 .ToString();
         }
     }

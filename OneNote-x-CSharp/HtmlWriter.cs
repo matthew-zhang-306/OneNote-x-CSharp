@@ -54,7 +54,9 @@ namespace OneNote_x_CSharp
         public HtmlWriter CloseTag()
         {
             if (tags.Count == 0)
+            {
                 return this;
+            }
 
             string tag = tags.Pop();
             body.RemoveIndent().Append("</" + tag + ">");

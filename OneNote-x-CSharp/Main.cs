@@ -41,7 +41,9 @@ namespace OneNote_x_CSharp
             {
                 // Ignore QuestLearning's Notebook
                 if (!notebookNode.GetAttribute("name", "QuestLearning").Contains("QuestLearning"))
+                {
                     Notebooks.Add(new Notebook(notebookNode));
+                }
             }
         }
 
