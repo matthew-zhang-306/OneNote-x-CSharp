@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -19,5 +20,24 @@ namespace OneNote_x_CSharp
         public static bool IsWeekday(string str) => new List<string> { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" }.Contains(str.Capitalized());
 
         public static string Print(this IEnumerable<string> list) => "[ " + string.Join(", ", list) + " ]";
+        public static string Print(this RectangleF rect) => "RECT [ " + rect.X + ", " + rect.Y + ", " + rect.Width + ", " + rect.Height + " ]";
+
+        public static RectangleF ExtractXmlRect(XmlNode node)
+        {
+            XmlNode pos = node.SelectSingleNode("./one:Position", Main.nsmgr),
+                    siz = node.SelectSingleNode("./one:Size", Main.nsmgr);
+
+            if (pos == null || siz == null)
+            {
+                return RectangleF.Empty;
+            }
+
+            return new RectangleF(
+                float.Parse(pos.GetAttribute("x", "0.0")),
+                float.Parse(pos.GetAttribute("y", "0.0")),
+                float.Parse(siz.GetAttribute("width", "0.0")),
+                float.Parse(siz.GetAttribute("height", "0.0"))
+            );
+        }
     }
 }

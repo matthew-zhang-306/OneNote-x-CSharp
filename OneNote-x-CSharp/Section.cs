@@ -19,11 +19,10 @@ namespace OneNote_x_CSharp
 
         public List<Page> Pages { get; private set; }
 
-        public Section(XmlNode sectionNode, Notebook notebook) : this(sectionNode, notebook, null, false) { }
-        public Section(XmlNode sectionNode, SectionGroup sectionGroup) : this(sectionNode, sectionGroup.Notebook, sectionGroup, true) { }
-
-        private Section(XmlNode sectionNode, Notebook notebook, SectionGroup sectionGroup, bool hasSectionGroup)
+        public Section(XmlNode sectionNode, Notebook notebook, SectionGroup sectionGroup = null)
         {
+            bool hasSectionGroup = sectionGroup != null;
+
             Name = sectionNode.GetAttribute("name", "untitled");
             Deleted = sectionNode.GetAttribute("isInRecycleBin", "false") == "true";
 

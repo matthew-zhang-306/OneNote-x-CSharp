@@ -14,6 +14,19 @@ namespace OneNote_x_CSharp
         public string Name { get; private set; }
         public string Subject { get { return Section.Subject; } }
 
+        public XmlNode Tag { get; private set; }
+        public string TagName { get; private set; }
+
+        public DateTime CreationTime { get; private set; }
+        public DateTime LastAssignedTime { get; private set; }
+        public DateTime LastModifiedTime { get; private set; }
+        public DateTime OriginalAssignmentDate { get; private set; }
+
+        public bool Active { get; private set; }
+        public bool Changed { get; private set; }
+        public bool HasWork { get; private set; }
+        public bool Empty { get; private set; }
+
         public Section Section { get; private set; }
         public SectionGroup SectionGroup { get { return Section.SectionGroup; } }
 
@@ -30,7 +43,7 @@ namespace OneNote_x_CSharp
             // Debug
             if (Name == "Algebra 1 Evaluating Simple Expressions 1-2")
             {
-                Console.WriteLine(pageXml.Print());
+                Console.WriteLine(pageXml.Print() + "\n");
             }
 
             LoadTags(pageXml);
@@ -52,7 +65,7 @@ namespace OneNote_x_CSharp
 
         void LoadTags(XmlDocument pageXml)
         {
-
+            TagName = DefaultTag; // replace with actual tag logic
         }
 
         void LoadDates(XmlDocument pageXml)
@@ -92,12 +105,20 @@ namespace OneNote_x_CSharp
 
         public string FullReport()
         {
-            // Add actual report
-            return new Indenter(Name.PadRight(40) + "(date)")
+            Indenter indenter =
+                new Indenter(Name.PadRight(40) + "(date)")
                 .AddIndent()
-                .Append(Images.Count + " image(s)")
-                .Append(Inks.Count + " ink(s)")
-                .ToString();
+                .Append("Tag: " + TagName)
+                .Append(Images.Count + " image(s):")
+                .AddIndent("|   ");
+
+            for (int i = 0; i < Images.Count; i++)
+            {
+                indenter.Append(i + 1 + ") ");
+                indenter.AppendOnSameLine(Images[i].FullReport());
+            }
+
+            return indenter.ToString();
         }
     }
 }

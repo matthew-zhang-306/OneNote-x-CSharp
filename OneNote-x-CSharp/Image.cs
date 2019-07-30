@@ -8,20 +8,32 @@ namespace OneNote_x_CSharp
 {
     public class Image
     {
-        public bool IsValid { get; private set; }
+        public RectangleF Rect { get; private set; }
 
         public List<Ink> Inks { get; private set; }
 
         public Image(XmlNode imageNode, Page page)
         {
-            IsValid = true; // replace with null position/size check
+            Rect = Helpers.ExtractXmlRect(imageNode);
 
-            SetInks(page.Inks);
+            Inks = page.Inks.Where(ink => Rect.IntersectsWith(ink.Rect)).ToList();
         }
 
-        void SetInks(List<Ink> allInks)
+        public string FullReport()
         {
-            Inks = allInks; // replace with .where intersects check
+            Indenter indenter =
+                new Indenter(ToString());
+
+            if (Inks.Count > 0)
+            {
+                indenter.Append(Inks.Count + " ink(s):")
+                    .AddIndent("|   ")
+                    .Append(Inks.Select((ink, i) => i + 1 + ") " + ink.ToString()));
+            }
+
+            return indenter.ToString();
         }
+
+        public override string ToString() => Rect.Print();
     }
 }
