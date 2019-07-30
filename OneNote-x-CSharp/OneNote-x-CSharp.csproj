@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers.cs" />
+    <Compile Include="HtmlWriter.cs" />
     <Compile Include="Image.cs" />
     <Compile Include="Indenter.cs" />
     <Compile Include="Ink.cs" />

@@ -7,7 +7,7 @@ namespace OneNote_x_CSharp
 
     public class Indenter
     {
-        List<string> indents;
+        Stack<string> indents;
         string fullIndent;
 
         string output;
@@ -17,9 +17,17 @@ namespace OneNote_x_CSharp
             Clear().Append(initialValue);
         }
 
+        public Indenter Clear()
+        {
+            indents = new Stack<string>();
+            output = "";
+
+            return this;
+        }
+
         public Indenter AddIndent(string indent = "    ")
         {
-            indents.Add(indent);
+            indents.Push(indent);
             fullIndent += indent;
 
             return this;
@@ -27,9 +35,12 @@ namespace OneNote_x_CSharp
 
         public Indenter RemoveIndent()
         {
-            fullIndent = fullIndent.Substring(0, fullIndent.Length - indents[indents.Count - 1].Length);
-            indents.RemoveAt(indents.Count - 1);
+            if (indents.Count == 0)
+                return this;
             
+            string indent = indents.Pop();
+            fullIndent = fullIndent.Substring(0, fullIndent.Length - indent.Length);
+
             return this;
         }
 
@@ -54,14 +65,6 @@ namespace OneNote_x_CSharp
             {
                 Append(line);
             }
-
-            return this;
-        }
-
-        public Indenter Clear()
-        {
-            indents = new List<string>();
-            output = "";
 
             return this;
         }
