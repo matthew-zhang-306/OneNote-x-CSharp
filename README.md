@@ -1,6 +1,6 @@
 # OneNote-x-CSharp
  
-A C# script for compiling reports of existing student work stored in OneNote. Creates reports in text form and in HTML form for use on a separate web service.
+A C# application for compiling reports of existing student work stored in OneNote. Creates reports in text form and in HTML form for use on a separate web service.
 
 For Gideon Math & Reading
 
