@@ -65,12 +65,36 @@ namespace OneNote_x_CSharp
 
         void LoadTags(XmlDocument pageXml)
         {
-            TagName = DefaultTag; // replace with actual tag logic
+            Tag = pageXml.SelectSingleNode("//one:Tag", Main.nsmgr);
+
+            if (Tag == null)
+            {
+                TagName = DefaultTag;
+            }
+            else
+            {
+                TagName = pageXml.SelectSingleNode("//one:TagDef", Main.nsmgr)?.GetAttribute("name", DefaultTag) ?? DefaultTag;
+            }
         }
 
         void LoadDates(XmlDocument pageXml)
         {
+            CreationTime = DateTime.Parse(pageXml.GetAttribute("dateTime", ""));
+            LastModifiedTime = DateTime.Parse(pageXml.GetAttribute("lastModifiedTime", ""));
 
+            LastAssignedTime = DateTime.Parse(Tag?.GetAttribute("creationDate") ?? CreationTime.ToString());
+            
+            if (Helpers.IsWeekday(SectionGroup.Name))
+            {
+                for (OriginalAssignmentDate = CreationTime.Date; OriginalAssignmentDate.ToString("dddd") != SectionGroup.Name.Capitalized();)
+                {
+                    OriginalAssignmentDate = OriginalAssignmentDate.AddDays(1);
+                }
+            }
+            else
+            {
+                OriginalAssignmentDate = LastAssignedTime.Date;
+            }
         }
 
         void LoadInks(XmlDocument pageXml)
@@ -100,13 +124,17 @@ namespace OneNote_x_CSharp
 
         void SetStatus()
         {
-
+            Active = LastModifiedTime > DateTime.Now.AddDays(-ActiveThreshold);
+            Changed = LastModifiedTime > LastAssignedTime;
+            HasWork = Images.Any(image => image.HasWork);
+            Empty = Images.Count == 0;
         }
 
         public string FullReport()
         {
             Indenter indenter =
-                new Indenter(Name.PadRight(40) + "(date)")
+                new Indenter(Name.PadRight(60) + "(" + OriginalAssignmentDate.ToString("MM/dd/yyyy") + ")")
+                .AppendOnSameLine(HasWork && Changed ? " (!)(modified)" : "")
                 .AddIndent()
                 .Append("Tag: " + TagName)
                 .Append(Images.Count + " image(s):")

@@ -9,9 +9,9 @@ namespace OneNote_x_CSharp
 {
     public static class Helpers
     {
+        public static string GetAttribute(this XmlDocument xml, string name, string def = null) => xml.DocumentElement.GetAttribute(name, def);
         public static string GetAttribute(this XmlNode xml, string name, string def = null) => xml.Attributes?[name]?.Value ?? def;
 
-        public static string Print(this XmlDocument xml) => XDocument.Parse(xml.OuterXml).ToString();
         public static string Print(this XmlNode xml) => XDocument.Parse(xml.OuterXml).ToString();
 
         public static bool ContainsIgnoreCase(this string str, string inner) => str.ToLower().Contains(inner.ToLower());
@@ -21,6 +21,8 @@ namespace OneNote_x_CSharp
 
         public static string Print(this IEnumerable<string> list) => "[ " + string.Join(", ", list) + " ]";
         public static string Print(this RectangleF rect) => "RECT [ " + rect.X + ", " + rect.Y + ", " + rect.Width + ", " + rect.Height + " ]";
+
+        public static float Area(this RectangleF rect) => rect.Width * rect.Height;
 
         public static RectangleF ExtractXmlRect(XmlNode node)
         {
