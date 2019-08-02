@@ -64,6 +64,16 @@ namespace OneNote_x_CSharp
             return this;
         }
 
+        public HtmlWriter CloseAllTags()
+        {
+            while (tags.Count > 0)
+            {
+                CloseTag();
+            }
+
+            return this;
+        }
+
         public HtmlWriter AddText(string text)
         {
             body.Append(text.Replace("\"", "&quot;").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
