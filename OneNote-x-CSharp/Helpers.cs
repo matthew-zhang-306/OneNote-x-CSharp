@@ -15,11 +15,13 @@ namespace OneNote_x_CSharp
         public static string Print(this XmlNode xml) => XDocument.Parse(xml.OuterXml).ToString();
 
         public static bool ContainsIgnoreCase(this string str, string inner) => str.ToLower().Contains(inner.ToLower());
+        public static bool EqualsIgnoreCase(this string str, string inner) => str.ToLower() == inner.ToLower();
+
         public static string Capitalized(this string str) => str.Length > 0 ? str[0].ToString().ToUpper() + str.Substring(1) : str;
 
         public static bool IsWeekday(string str) => new List<string> { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" }.Contains(str.Capitalized());
 
-        public static string Print(this IEnumerable<string> list) => "[ " + string.Join(", ", list) + " ]";
+        public static string Print(this IEnumerable<string> list) => list != null ? "[ " + string.Join(", ", list) + " ]" : "null";
         public static string Print(this RectangleF rect) => "RECT [ " + rect.X + ", " + rect.Y + ", " + rect.Width + ", " + rect.Height + " ]";
 
         public static float Area(this RectangleF rect) => rect.Width * rect.Height;

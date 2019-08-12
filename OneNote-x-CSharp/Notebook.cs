@@ -63,6 +63,22 @@ namespace OneNote_x_CSharp
             }
         }
 
+        public List<Page> GetPagesWhere(Func<Page, bool> check)
+        {
+            return Sections.Aggregate(new List<Page>(), (list, section) => list.Concat(section.Pages.Where(check)).ToList());
+        }
+        public bool HasPagesWhere(Func<Page, bool> check)
+        {
+            return Sections.Any((section) => section.Pages.Any(check));
+        }
+
+        public List<Page> GetUngradedPages() => GetPagesWhere((page) => page.Changed && page.HasWork);
+        public List<Page> GetInactivePages() => GetPagesWhere((page) => !page.Active);
+        public List<Page> GetEmptyPages() => GetPagesWhere((page) => page.Empty);
+        public List<Page> GetUnreviewedPages() => GetPagesWhere((page) => page.TagName.ContainsIgnoreCase("review"));
+
+        public bool HasAssignedPages(string subject, DateTime date) => HasPagesWhere((page) => !page.Empty && page.Subject.EqualsIgnoreCase(subject) && page.OriginalAssignmentDate.Date == date.Date);
+
         public string FullReport()
         {
             return new Indenter(Name + " " + Subjects.Print())

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using Microsoft.Office.Interop.OneNote;
@@ -8,12 +9,19 @@ namespace OneNote_x_CSharp
 {
     public class Main
     {
+        public static string path { get; private set; }
+        public static string reportPath { get { return path + "\\reports"; } }
+        public static string htmlPath { get { return path + "\\reports\\html"; } }
+
         public static XmlNamespaceManager nsmgr { get; private set; }
 
         public List<Notebook> Notebooks { get; private set; }
 
         public Main()
         {
+            // Get folder path
+            path = Directory.GetCurrentDirectory();
+
             XmlDocument xml = GetFullXml();
 
             // Set namespace manager to be used by every other xml based class
@@ -52,7 +60,7 @@ namespace OneNote_x_CSharp
             string report = string.Join("\n\n", Notebooks.Select(notebook => notebook.FullReport()));
 
             Console.WriteLine(report);
-            // write to file
+            File.WriteAllText(reportPath + "\\fullreport.txt", report);
         }
     }
 }
