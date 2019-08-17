@@ -148,5 +148,29 @@ namespace OneNote_x_CSharp
 
             return indenter.ToString();
         }
+
+        public string StatusReport()
+        {
+            return "PAGE: " +
+                string.Join(" | ", new string[]
+                {
+                    Section.Notebook.Name.PadRight(20),
+                    SectionGroup.Name.PadRight(10),
+                    Section.Name.PadRight(12),
+                    Name
+                });
+        }
+
+        public HtmlWriter StatusReportHtml()
+        {
+            return new HtmlWriter()
+                .AddTag("tr", "statusReportPageRow")
+                    .AddElement("td", "statusReportPageNotebook"    , Section.Notebook.Name)
+                    .AddElement("td", "statusReportPageSectionGroup", SectionGroup.Name)
+                    .AddElement("td", "statusReportPageSection"     , Section.Name)
+                    .AddElement("td", "statusReportPage"            , Name)
+                    .AddElement("td", "statusReportPageTag"         , TagName)
+                .CloseTag();
+        }
     }
 }

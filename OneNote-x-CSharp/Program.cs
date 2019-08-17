@@ -20,14 +20,21 @@ namespace OneNote_x_CSharp
             else
             {
                 Main m = new Main();
+
                 m.DoFullReport();
+                m.DoFullReportHtml();
+                Console.WriteLine();
 
-                // Add more reports
+                m.DoStatusReports();
+                m.DoStatusReportsHtml();
+                Console.WriteLine();
 
+                m.DoMissingAssignmentReport();
+                m.DoMissingAssignmentReportHtml();
                 Console.WriteLine();
 
                 Uploader uploader = new Uploader();
-                // uploader.UploadHtml();
+                uploader.UploadHtml();
             }
         }
 

@@ -19,7 +19,7 @@ namespace OneNote_x_CSharp
 
         public List<Notebook> Notebooks { get; private set; }
 
-        public string lastUpdatedHtml;
+        public HtmlWriter lastUpdatedHtml;
 
         public Main()
         {
@@ -61,13 +61,12 @@ namespace OneNote_x_CSharp
             }
         }
 
-        string GetLastUpdatedHtml()
+        HtmlWriter GetLastUpdatedHtml()
         {
             return new HtmlWriter()
                 .AddTag("div", "reportLastUpdated")
                 .AddElement("p", "reportLastUpdatedText", "Last updated " + DateTime.Now.ToString("M/d h:mm tt"))
-                .CloseTag()
-                .ToString();
+                .CloseTag();
         }
 
         public void DoFullReport()
@@ -85,12 +84,59 @@ namespace OneNote_x_CSharp
 
         public void DoStatusReports()
         {
+            DoStatusReport(notebook => notebook.GetUngradedPages()  , "ungraded");
+            DoStatusReport(notebook => notebook.GetInactivePages()  , "inactive");
+            DoStatusReport(notebook => notebook.GetEmptyPages()     , "empty");
+            DoStatusReport(notebook => notebook.GetUnreviewedPages(), "unreviewed");
+        }
 
+        void DoStatusReport(Func<Notebook, List<Page>> func, string name)
+        {
+            List<Page> pages = new List<Page>();
+            foreach (Notebook notebook in Notebooks)
+            {
+                pages.AddRange(func.Invoke(notebook));
+            }
+
+            string report = new Indenter()
+                .Append(pages.Count + " " + name + " pages:")
+                .Append(pages.Select(page => page.StatusReport()))
+                .Append(" ")
+                .ToString();
+
+            Console.WriteLine(report);
+            File.WriteAllText(reportPath + "\\" + name + "report.txt", report);
         }
 
         public void DoStatusReportsHtml()
         {
+            DoStatusReportHtml(notebook => notebook.GetUngradedPages()  , "UngradedPages");
+            DoStatusReportHtml(notebook => notebook.GetInactivePages()  , "InactivePages");
+            DoStatusReportHtml(notebook => notebook.GetEmptyPages()     , "EmptyPages");
+            DoStatusReportHtml(notebook => notebook.GetUnreviewedPages(), "UnreviewedPages");
+        }
 
+        void DoStatusReportHtml(Func<Notebook, List<Page>> func, string name)
+        {
+            HtmlWriter htmlWriter = new HtmlWriter()
+                .AddTag("div", "statusReportContainer")
+                    .AddHtml(lastUpdatedHtml)
+                    .AddTag("table", "statusReportTable")
+                        .AddTag("tr", "statusReportHeaderRow")
+                            .AddElement("th", "statusReportHeaderNotebook"    , "Notebook")
+                            .AddElement("th", "statusReportHeaderSectionGroup", "Section Group")
+                            .AddElement("th", "statusReportHeaderSection"     , "Section")
+                            .AddElement("th", "statusReportHeaderPage"        , "Page")
+                            .AddElement("th", "statusReportHeaderTag"         , "Tag")
+                        .CloseTag();
+            
+            foreach (Notebook notebook in Notebooks)
+            {
+                htmlWriter.AddHtml(func.Invoke(notebook).Select(page => page.StatusReportHtml()));
+            }
+
+            string report = htmlWriter.CloseAllTags().ToString();
+            File.WriteAllText(htmlPath + "\\" + name + ".html", report);
         }
 
         public void DoMissingAssignmentReport()

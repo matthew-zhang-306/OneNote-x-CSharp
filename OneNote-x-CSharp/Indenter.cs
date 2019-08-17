@@ -63,12 +63,7 @@ namespace OneNote_x_CSharp
 
         public Indenter Append(IEnumerable<string> lines)
         {
-            foreach (string line in lines)
-            {
-                Append(line);
-            }
-
-            return this;
+            return lines.Aggregate(this, (ind, line) => ind.Append(line));
         }
 
         public override string ToString() => output;

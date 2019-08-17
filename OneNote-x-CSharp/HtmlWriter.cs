@@ -79,10 +79,19 @@ namespace OneNote_x_CSharp
             body.Append(text.Replace("\"", "&quot;").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
             return this;
         }
+        public HtmlWriter AddText(IEnumerable<string> lines)
+        {
+            return lines.Aggregate(this, (writer, line) => writer.AddText(line));
+        }
+
         public HtmlWriter AddHtml(HtmlWriter html)
         {
             body.Append(html.ToString());
             return this;
+        }
+        public HtmlWriter AddHtml(IEnumerable<HtmlWriter> htmls)
+        {
+            return htmls.Aggregate(this, (writer, html) => writer.AddHtml(html));
         }
 
         public override string ToString()
