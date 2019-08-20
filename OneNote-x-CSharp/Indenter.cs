@@ -61,10 +61,9 @@ namespace OneNote_x_CSharp
             return AppendOnSameLine(lines);
         }
 
-        public Indenter Append(IEnumerable<string> lines)
-        {
-            return lines.Aggregate(this, (ind, line) => ind.Append(line));
-        }
+        public Indenter Append(IEnumerable<string> lines) => lines.Aggregate(this, (ind, line) => ind.Append(line));
+
+        public bool IsEmpty() => output.Length == 0;
 
         public override string ToString() => output;
     }

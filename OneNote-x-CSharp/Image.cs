@@ -27,7 +27,7 @@ namespace OneNote_x_CSharp
 
         void CheckForWork()
         {
-            HasWork = Inks.Count >= MinimumInks && Inks.Aggregate(0f, (acc, ink) => acc + ink.Rect.Area()) / Rect.Area() >= PageFillConstant;
+            HasWork = Inks.Count >= MinimumInks && Inks.Sum(ink => ink.Rect.Area()) / Rect.Area() >= PageFillConstant;
         }
 
         public string FullReport()

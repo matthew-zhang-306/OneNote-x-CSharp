@@ -163,13 +163,13 @@ namespace OneNote_x_CSharp
 
         public HtmlWriter StatusReportHtml()
         {
-            return new HtmlWriter()
-                .AddTag("tr", "statusReportPageRow")
-                    .AddElement("td", "statusReportPageNotebook"    , Section.Notebook.Name)
-                    .AddElement("td", "statusReportPageSectionGroup", SectionGroup.Name)
-                    .AddElement("td", "statusReportPageSection"     , Section.Name)
-                    .AddElement("td", "statusReportPage"            , Name)
-                    .AddElement("td", "statusReportPageTag"         , TagName)
+            return new HtmlWriter("statusReport")
+                .AddTag("tr", "PageRow")
+                    .AppendElement("td", "PageNotebook"    , Section.Notebook.Name)
+                    .AppendElement("td", "PageSectionGroup", SectionGroup.Name)
+                    .AppendElement("td", "PageSection"     , Section.Name)
+                    .AppendElement("td", "Page"            , Name)
+                    .AppendElement("td", "PageTag"         , TagName)
                 .CloseTag();
         }
     }

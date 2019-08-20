@@ -20,6 +20,7 @@ namespace OneNote_x_CSharp
         public Notebook(XmlNode notebookNode)
         {
             Name = notebookNode.GetAttribute("name", "untitled");
+            Subjects = new List<string>();
 
             LoadSectionGroups(notebookNode);
             LoadSections(notebookNode);
@@ -27,11 +28,6 @@ namespace OneNote_x_CSharp
 
         public void AddSubject(string subject)
         {
-            if (Subjects == null)
-            {
-                Subjects = new List<string>();
-            }
-
             if (!Subjects.Contains(subject))
             {
                 Subjects.Add(subject);
@@ -63,18 +59,12 @@ namespace OneNote_x_CSharp
             }
         }
 
-        public List<Page> GetPagesWhere(Func<Page, bool> check)
-        {
-            return Sections.Aggregate(new List<Page>(), (list, section) => list.Concat(section.Pages.Where(check)).ToList());
-        }
-        public bool HasPagesWhere(Func<Page, bool> check)
-        {
-            return Sections.Any((section) => section.Pages.Any(check));
-        }
+        public List<Page> GetPagesWhere(Func<Page, bool> check) => Sections.Aggregate(new List<Page>(), (list, section) => list.Concat(section.Pages.Where(check)).ToList());
+        public bool HasPagesWhere(Func<Page, bool> check) => Sections.Any((section) => section.Pages.Any(check));
 
-        public List<Page> GetUngradedPages() => GetPagesWhere((page) => page.Changed && page.HasWork);
-        public List<Page> GetInactivePages() => GetPagesWhere((page) => !page.Active);
-        public List<Page> GetEmptyPages() => GetPagesWhere((page) => page.Empty);
+        public List<Page> GetUngradedPages()   => GetPagesWhere((page) => page.Changed && page.HasWork);
+        public List<Page> GetInactivePages()   => GetPagesWhere((page) => !page.Active);
+        public List<Page> GetEmptyPages()      => GetPagesWhere((page) => page.Empty);
         public List<Page> GetUnreviewedPages() => GetPagesWhere((page) => page.TagName.ContainsIgnoreCase("review"));
 
         public bool HasAssignedPages(string subject, DateTime date) => HasPagesWhere((page) => !page.Empty && page.Subject.EqualsIgnoreCase(subject) && page.OriginalAssignmentDate.Date == date.Date);
@@ -85,6 +75,47 @@ namespace OneNote_x_CSharp
                 .Append("--------------------------------")
                 .Append(SectionGroups.Select(sectionGroup => sectionGroup.FullReport()))
                 .ToString();
+        }
+
+        public string MissingAssignmentReport(DateTime date)
+        {
+            return new Indenter()
+                .Append(Subjects.Where(subject => !HasAssignedPages(subject, date)).Select(subject => Name + " - " + subject))
+                .ToString();
+        }
+
+        public HtmlWriter MissingAssignmentReportHtml(DateTime date)
+        {
+            HtmlWriter htmlWriter = new HtmlWriter("missingAssignment")
+                .AddTag("tr", "StudentRow")
+                    .AppendElement("td", "CellItem", Name);
+
+            bool flag = false;
+            foreach (string subject in AllSubjects)
+            {
+                string className = "CellItem", content;
+
+                if (!Subjects.Contains(subject))
+                {
+                    className += "NA";
+                    content = "N/A";
+                }
+                else if (HasAssignedPages(subject, date))
+                {
+                    className += "OK";
+                    content = "&nbsp;";
+                }
+                else
+                {
+                    className += "X";
+                    content = "X";
+                    flag = true;
+                }
+
+                htmlWriter.AppendElement("td", className, content);
+            }
+
+            return flag ? htmlWriter.CloseAllTags() : null;
         }
     }
 }

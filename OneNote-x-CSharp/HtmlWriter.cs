@@ -10,8 +10,11 @@ namespace OneNote_x_CSharp
         Stack<string> tags;
         Indenter body;
 
-        public HtmlWriter()
+        public string ClassPrefix { get; private set; }
+
+        public HtmlWriter(string classPrefix = "")
         {
+            ClassPrefix = classPrefix;
             Clear();
         }
 
@@ -29,16 +32,7 @@ namespace OneNote_x_CSharp
             return this;
         }
 
-        public HtmlWriter AddElement(string tagName, string className, string text)
-        {
-            return AddTag(tagName, className).AddText(text).CloseTag();
-        }
-        public HtmlWriter AddElement(string tagName, string className, HtmlWriter html)
-        {
-            return AddTag(tagName, className).AddHtml(html).CloseTag();
-        }
-
-        public HtmlWriter AddTag(string tagName, string className)
+        public HtmlWriter AddTag(string tagName, string className = "")
         {
             if (Regex.Match(tagName, @"\W").Success)
             {
@@ -46,8 +40,13 @@ namespace OneNote_x_CSharp
             }
 
             tags.Push(tagName);
-            body.Append("<" + tagName + " class='" + className.Replace("'", "") + "'>").AddIndent();
+            body.Append("<" + tagName);
 
+            if ((ClassPrefix + className).Length > 0) {
+                body.AppendOnSameLine(" class='" + (ClassPrefix + className).Replace("'", "") + "'");
+            }
+
+            body.AppendOnSameLine(">").AddIndent();
             return this;
         }
 
@@ -74,25 +73,28 @@ namespace OneNote_x_CSharp
             return this;
         }
 
-        public HtmlWriter AddText(string text)
+        public HtmlWriter AppendElement(string tagName, string className, string text)                  => AddTag(tagName, className).AppendText(text).CloseTag();
+        public HtmlWriter AppendElement(string tagName, string className, IEnumerable<string> text)     => AddTag(tagName, className).AppendText(text).CloseTag();
+        public HtmlWriter AppendElement(string tagName, string className, HtmlWriter html)              => AddTag(tagName, className).AppendHtml(html).CloseTag();
+        public HtmlWriter AppendElement(string tagName, string className, IEnumerable<HtmlWriter> html) => AddTag(tagName, className).AppendHtml(html).CloseTag();
+
+        public HtmlWriter AppendText(string text)
         {
             body.Append(text.Replace("\"", "&quot;").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
             return this;
         }
-        public HtmlWriter AddText(IEnumerable<string> lines)
-        {
-            return lines.Aggregate(this, (writer, line) => writer.AddText(line));
-        }
 
-        public HtmlWriter AddHtml(HtmlWriter html)
+        public HtmlWriter AppendText(IEnumerable<string> lines) => lines.Aggregate(this, (writer, line) => writer.AppendText(line));
+
+        public HtmlWriter AppendHtml(HtmlWriter html)
         {
             body.Append(html.ToString());
             return this;
         }
-        public HtmlWriter AddHtml(IEnumerable<HtmlWriter> htmls)
-        {
-            return htmls.Aggregate(this, (writer, html) => writer.AddHtml(html));
-        }
+
+        public HtmlWriter AppendHtml(IEnumerable<HtmlWriter> htmls) => htmls.Aggregate(this, (writer, html) => writer.AppendHtml(html));
+
+        public bool IsEmpty() => body.IsEmpty();
 
         public override string ToString()
         {

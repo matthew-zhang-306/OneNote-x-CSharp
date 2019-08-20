@@ -65,7 +65,7 @@ namespace OneNote_x_CSharp
         {
             return new HtmlWriter()
                 .AddTag("div", "reportLastUpdated")
-                .AddElement("p", "reportLastUpdatedText", "Last updated " + DateTime.Now.ToString("M/d h:mm tt"))
+                .AppendElement("p", "reportLastUpdatedText", "Last updated " + DateTime.Now.ToString("M/d h:mm tt"))
                 .CloseTag();
         }
 
@@ -84,9 +84,9 @@ namespace OneNote_x_CSharp
 
         public void DoStatusReports()
         {
-            DoStatusReport(notebook => notebook.GetUngradedPages()  , "ungraded");
-            DoStatusReport(notebook => notebook.GetInactivePages()  , "inactive");
-            DoStatusReport(notebook => notebook.GetEmptyPages()     , "empty");
+            DoStatusReport(notebook => notebook.GetUngradedPages(), "ungraded");
+            DoStatusReport(notebook => notebook.GetInactivePages(), "inactive");
+            DoStatusReport(notebook => notebook.GetEmptyPages(), "empty");
             DoStatusReport(notebook => notebook.GetUnreviewedPages(), "unreviewed");
         }
 
@@ -110,29 +110,29 @@ namespace OneNote_x_CSharp
 
         public void DoStatusReportsHtml()
         {
-            DoStatusReportHtml(notebook => notebook.GetUngradedPages()  , "UngradedPages");
-            DoStatusReportHtml(notebook => notebook.GetInactivePages()  , "InactivePages");
-            DoStatusReportHtml(notebook => notebook.GetEmptyPages()     , "EmptyPages");
+            DoStatusReportHtml(notebook => notebook.GetUngradedPages(), "UngradedPages");
+            DoStatusReportHtml(notebook => notebook.GetInactivePages(), "InactivePages");
+            DoStatusReportHtml(notebook => notebook.GetEmptyPages(), "EmptyPages");
             DoStatusReportHtml(notebook => notebook.GetUnreviewedPages(), "UnreviewedPages");
         }
 
         void DoStatusReportHtml(Func<Notebook, List<Page>> func, string name)
         {
-            HtmlWriter htmlWriter = new HtmlWriter()
-                .AddTag("div", "statusReportContainer")
-                    .AddHtml(lastUpdatedHtml)
-                    .AddTag("table", "statusReportTable")
-                        .AddTag("tr", "statusReportHeaderRow")
-                            .AddElement("th", "statusReportHeaderNotebook"    , "Notebook")
-                            .AddElement("th", "statusReportHeaderSectionGroup", "Section Group")
-                            .AddElement("th", "statusReportHeaderSection"     , "Section")
-                            .AddElement("th", "statusReportHeaderPage"        , "Page")
-                            .AddElement("th", "statusReportHeaderTag"         , "Tag")
+            HtmlWriter htmlWriter = new HtmlWriter("statusReport")
+                .AddTag("div", "Container")
+                    .AppendHtml(lastUpdatedHtml)
+                    .AddTag("table", "Table")
+                        .AddTag("tr", "HeaderRow")
+                            .AppendElement("th", "HeaderNotebook", "Notebook")
+                            .AppendElement("th", "HeaderSectionGroup", "Section Group")
+                            .AppendElement("th", "HeaderSection", "Section")
+                            .AppendElement("th", "HeaderPage", "Page")
+                            .AppendElement("th", "HeaderTag", "Tag")
                         .CloseTag();
-            
+
             foreach (Notebook notebook in Notebooks)
             {
-                htmlWriter.AddHtml(func.Invoke(notebook).Select(page => page.StatusReportHtml()));
+                htmlWriter.AppendHtml(func.Invoke(notebook).Select(page => page.StatusReportHtml()));
             }
 
             string report = htmlWriter.CloseAllTags().ToString();
@@ -141,12 +141,62 @@ namespace OneNote_x_CSharp
 
         public void DoMissingAssignmentReport()
         {
+            Indenter indenter = new Indenter();
 
+            DateTime date = DateTime.Today;
+            for (int i = 0; i < missingAssignmentLookahead; date = date.AddDays(1))
+            {
+                if (date.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    continue;
+                }
+                i++;
+
+                indenter = indenter.Append(date.ToString("MM/dd/yyyy") + " missing:")
+                    .AddIndent("    - ")
+                    .Append(Notebooks.Select(notebook => notebook.MissingAssignmentReport(date)).Where(str => str.Length > 0))
+                    .RemoveIndent()
+                    .Append("");
+            }
+
+            string report = indenter.ToString();
+
+            Console.WriteLine(report);
+            File.WriteAllText(reportPath + "\\missingassignmentreport.txt", report);
         }
 
         public void DoMissingAssignmentReportHtml()
         {
+            HtmlWriter htmlWriter = new HtmlWriter("missingAssignment")
+                .AddTag("div", "Container")
+                    .AppendHtml(lastUpdatedHtml);
 
+            DateTime date = DateTime.Today;
+            for (int i = 0; i < missingAssignmentLookahead; date = date.AddDays(1))
+            {
+                if (date.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    continue;
+                }
+                i++;
+
+                htmlWriter.AddTag("div", "DayContainer")
+                    .AppendElement("p", "DayHeader", date.ToString("MM/dd/yyyy"))
+                    .AppendElement("p", "DaySubheader", "Assignments missing:")
+                    .AddTag("table", "DayTable")
+                        .AddTag("tbody", "TableBody")
+                            .AddTag("tr", "HeaderRow")
+                                .AppendElement("th", "CellHeader", "Name")
+                                .AppendHtml(Notebook.AllSubjects.Select(subject => new HtmlWriter().AppendElement("th", "CellHeader", subject)))
+                            .CloseTag()
+                            .AppendHtml(Notebooks.Select(notebook => notebook.MissingAssignmentReportHtml(date)).Where(html => html != null))
+                        .CloseTag()
+                    .CloseTag();
+            }
+
+            string report = htmlWriter.CloseAllTags().ToString();
+
+            File.WriteAllText(htmlPath + "\\MissingAssignmentReport.html", report);
         }
     }
 }
