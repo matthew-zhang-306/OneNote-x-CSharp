@@ -79,7 +79,7 @@ namespace OneNote_x_CSharp
 
         public void DoFullReportHtml()
         {
-
+            // TODO: Write report
         }
 
         public void DoStatusReports()

@@ -6,6 +6,9 @@ using WinSCP;
 
 namespace OneNote_x_CSharp
 {
+    /// <summary>
+    /// Class <c>Uploader</c> handles the FTP process of uploading html files to the site
+    /// </summary>
     public class Uploader
     {
         string hostName;
@@ -13,8 +16,14 @@ namespace OneNote_x_CSharp
         string password;
         string filePath;
 
+        SessionOptions sessionOptions;
+        TransferOptions transferOptions;
+
         string lastFileName;
 
+        /// <summary>
+        /// Creates a new Uploader object and loads options.
+        /// </summary>
         public Uploader()
         {
             using (StreamReader sr = new StreamReader(Main.path + "\\config.txt"))
@@ -25,12 +34,7 @@ namespace OneNote_x_CSharp
                 filePath = sr.ReadLine();
             }
 
-            lastFileName = "";
-        }
-
-        public void UploadHtml()
-        {
-            SessionOptions ops = new SessionOptions
+            sessionOptions = new SessionOptions
             {
                 Protocol = Protocol.Ftp,
                 HostName = hostName,
@@ -38,13 +42,23 @@ namespace OneNote_x_CSharp
                 Password = password
             };
 
+            transferOptions = new TransferOptions
+            {
+                TransferMode = TransferMode.Binary
+            };
+
+            lastFileName = "";
+        }
+
+        /// <summary>
+        /// Uploads all files located in the html folder to the site
+        /// </summary>
+        public void UploadHtml()
+        {
             using (Session session = new Session())
             {
                 session.FileTransferProgress += LogProgress;
-                session.Open(ops);
-
-                TransferOptions transferOptions = new TransferOptions();
-                transferOptions.TransferMode = TransferMode.Binary;
+                session.Open(sessionOptions);
 
                 TransferOperationResult res = session.PutFiles(Main.htmlPath, filePath, false, transferOptions);
                 res.Check();
@@ -57,12 +71,16 @@ namespace OneNote_x_CSharp
             }
         }
 
+        /// <summary>
+        /// Listener for the file transfer progress event which logs upload progress to the console.
+        /// </summary>
         void LogProgress(object sender, FileTransferProgressEventArgs e)
         {
             if (lastFileName != e.FileName)
             {
                 Console.WriteLine("Uploading {0}...", e.FileName);
             }
+
             lastFileName = e.FileName;
         }
     }
