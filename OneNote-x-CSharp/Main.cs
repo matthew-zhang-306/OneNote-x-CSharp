@@ -64,7 +64,7 @@ namespace OneNote_x_CSharp
         HtmlWriter GetLastUpdatedHtml()
         {
             return new HtmlWriter()
-                .AddTag("div", "reportLastUpdated")
+                .OpenTag("div", "reportLastUpdated")
                 .AppendElement("p", "reportLastUpdatedText", "Last updated " + DateTime.Now.ToString("M/d h:mm tt"))
                 .CloseTag();
         }
@@ -119,10 +119,10 @@ namespace OneNote_x_CSharp
         void DoStatusReportHtml(Func<Notebook, List<Page>> func, string name)
         {
             HtmlWriter htmlWriter = new HtmlWriter("statusReport")
-                .AddTag("div", "Container")
+                .OpenTag("div", "Container")
                     .AppendHtml(lastUpdatedHtml)
-                    .AddTag("table", "Table")
-                        .AddTag("tr", "HeaderRow")
+                    .OpenTag("table", "Table")
+                        .OpenTag("tr", "HeaderRow")
                             .AppendElement("th", "HeaderNotebook", "Notebook")
                             .AppendElement("th", "HeaderSectionGroup", "Section Group")
                             .AppendElement("th", "HeaderSection", "Section")
@@ -168,7 +168,7 @@ namespace OneNote_x_CSharp
         public void DoMissingAssignmentReportHtml()
         {
             HtmlWriter htmlWriter = new HtmlWriter("missingAssignment")
-                .AddTag("div", "Container")
+                .OpenTag("div", "Container")
                     .AppendHtml(lastUpdatedHtml);
 
             DateTime date = DateTime.Today;
@@ -180,12 +180,12 @@ namespace OneNote_x_CSharp
                 }
                 i++;
 
-                htmlWriter.AddTag("div", "DayContainer")
+                htmlWriter.OpenTag("div", "DayContainer")
                     .AppendElement("p", "DayHeader", date.ToString("MM/dd/yyyy"))
                     .AppendElement("p", "DaySubheader", "Assignments missing:")
-                    .AddTag("table", "DayTable")
-                        .AddTag("tbody", "TableBody")
-                            .AddTag("tr", "HeaderRow")
+                    .OpenTag("table", "DayTable")
+                        .OpenTag("tbody", "TableBody")
+                            .OpenTag("tr", "HeaderRow")
                                 .AppendElement("th", "CellHeader", "Name")
                                 .AppendHtml(Notebook.AllSubjects.Select(subject => new HtmlWriter().AppendElement("th", "CellHeader", subject)))
                             .CloseTag()

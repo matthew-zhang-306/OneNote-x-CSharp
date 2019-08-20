@@ -164,7 +164,7 @@ namespace OneNote_x_CSharp
         public HtmlWriter StatusReportHtml()
         {
             return new HtmlWriter("statusReport")
-                .AddTag("tr", "PageRow")
+                .OpenTag("tr", "PageRow")
                     .AppendElement("td", "PageNotebook"    , Section.Notebook.Name)
                     .AppendElement("td", "PageSectionGroup", SectionGroup.Name)
                     .AppendElement("td", "PageSection"     , Section.Name)
