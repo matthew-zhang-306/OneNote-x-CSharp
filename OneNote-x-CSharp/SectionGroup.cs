@@ -73,10 +73,22 @@ namespace OneNote_x_CSharp
         /// <summary>
         /// Returns the html full report for the sectiongroup.
         /// </summary>
+        /// <param name="isHeader">Whether to create a header cell, rather than an item cell.</param>
         /// <returns>The full report for the sectiongroup.</returns>
-        public HtmlWriter FullReportHtml()
+        public HtmlWriter FullReportHtml(bool isHeader)
         {
-            return new HtmlWriter();
+            HtmlWriter htmlWriter = new HtmlWriter("fullReport");
+
+            if (isHeader)
+            {
+                return htmlWriter.AppendElement("th", "SectionGroupCellHeader", Name);
+            }
+            else
+            {
+                return htmlWriter.OpenTag("td", "SectionGroupCellItem")
+                    .AppendElement("div", "SectionItem", Sections.Select(section => section.FullReportHtml()))
+                    .CloseTag();
+            }
         }
     }
 }

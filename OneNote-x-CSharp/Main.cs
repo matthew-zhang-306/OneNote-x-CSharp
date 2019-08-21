@@ -79,7 +79,14 @@ namespace OneNote_x_CSharp
 
         public void DoFullReportHtml()
         {
-            // TODO: Write report
+            string report = new HtmlWriter("fullReport")
+                .OpenTag("div", "Container")
+                    .AppendHtml(lastUpdatedHtml)
+                    .AppendHtml(Notebooks.Select(notebook => notebook.FullReportHtml().AppendBreak()))
+                .CloseTag()
+                .ToString();
+
+            File.WriteAllText(htmlPath + "\\FullReport.html", report);
         }
 
         public void DoStatusReports()

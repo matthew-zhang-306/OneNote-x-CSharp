@@ -51,7 +51,7 @@ namespace OneNote_x_CSharp
         /// Adds a single line break tag to the html.
         /// </summary>
         /// <returns>Itself, after the operation.</returns>
-        public HtmlWriter AddBreak()
+        public HtmlWriter AppendBreak()
         {
             body.Append("<br>");
             return this;
@@ -63,11 +63,11 @@ namespace OneNote_x_CSharp
         /// <param name="tagName">The tag name to be added.</param>
         /// <param name="className">The class name for the tag.</param>
         /// <returns>Itself, after the operation.</returns>
-        /// <exception cref="ArgumentException">Thrown when the tag name contains nonalphanumeric characters.</exception>
+        /// <exception cref="ArgumentException">Thrown when the tag name contains nonalphanumeric characters or is empty.</exception>
         /// <remarks>The class name will have any apostrophes (') removed.</remarks>
         public HtmlWriter OpenTag(string tagName, string className = "")
         {
-            if (Regex.Match(tagName, @"\W").Success)
+            if (!Regex.Match(tagName, @"^\w+$").Success)
             {
                 throw new ArgumentException("Tag name for HTML should only contain alphanumeric characters!");
             }
@@ -115,7 +115,7 @@ namespace OneNote_x_CSharp
         }
 
         /// <summary>
-        /// Adds an html element to the document.
+        /// Adds an html element to the document by opening a new tag, writing some content underneath, and then closing the tag.
         /// </summary>
         /// <param name="tagName">The tag to be added and closed.</param>
         /// <param name="className">The class name for the tag.</param>
@@ -124,7 +124,7 @@ namespace OneNote_x_CSharp
         public HtmlWriter AppendElement(string tagName, string className, string text)                  => OpenTag(tagName, className).AppendText(text).CloseTag();
 
         /// <summary>
-        /// Adds an html element to the document.
+        /// Adds an html element to the document by opening a new tag, writing some content underneath, and then closing the tag.
         /// </summary>
         /// <param name="tagName">The tag to be added and closed.</param>
         /// <param name="className">The class name for the tag.</param>
@@ -133,16 +133,16 @@ namespace OneNote_x_CSharp
         public HtmlWriter AppendElement(string tagName, string className, IEnumerable<string> text)     => OpenTag(tagName, className).AppendText(text).CloseTag();
 
         /// <summary>
-        /// Adds an html element to the document.
+        /// Adds an html element to the document by opening a new tag, writing some content underneath, and then closing the tag.
         /// </summary>
         /// <param name="tagName">The tag to be added and closed.</param>
         /// <param name="className">The class name for the tag.</param>
         /// <param name="html">The html to be contained inside the tag.</param>
         /// <returns>Itself, after the operation.</returns>
         public HtmlWriter AppendElement(string tagName, string className, HtmlWriter html)              => OpenTag(tagName, className).AppendHtml(html).CloseTag();
-        
+
         /// <summary>
-        /// Adds an html element to the document.
+        /// Adds an html element to the document by opening a new tag, writing some content underneath, and then closing the tag.
         /// </summary>
         /// <param name="tagName">The tag to be added and closed.</param>
         /// <param name="className">The class name for the tag.</param>

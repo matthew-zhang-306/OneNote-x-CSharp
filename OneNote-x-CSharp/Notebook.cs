@@ -157,7 +157,17 @@ namespace OneNote_x_CSharp
         /// <returns>The full report for the notebook.</returns>
         public HtmlWriter FullReportHtml()
         {
-            return new HtmlWriter();
+            return new HtmlWriter("fullReport")
+                .OpenTag("div", "NotebookContainer")
+                    .AppendElement("p", "NotebookName", Name)
+                    .OpenTag("div", "SectionTableContainer")
+                        .OpenTag("table", "SectionTable")
+                            .OpenTag("tr", "SectionGroupHeaderRow")
+                                .AppendHtml(SectionGroups.Select(sectiongroup => sectiongroup.FullReportHtml(true)))
+                            .CloseTag()
+                            .OpenTag("tr", "SectionGroupRow")
+                                .AppendHtml(SectionGroups.Select(sectiongroup => sectiongroup.FullReportHtml(false)))
+                .CloseAllTags();
         }
 
         /// <summary>

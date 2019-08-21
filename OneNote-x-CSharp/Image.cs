@@ -84,7 +84,10 @@ namespace OneNote_x_CSharp
         /// <returns>The full report for the image.</returns>
         public HtmlWriter FullReportHtml()
         {
-            return new HtmlWriter();
+            return new HtmlWriter("fullReport")
+                .OpenTag("li", "ImageItem")
+                    .AppendElement("p", "ImageSubheader", Inks.Count + " mark" + (Inks.Count == 1 ? "" : "s"))
+                .CloseTag();
         }
 
         public override string ToString() => Rect.Print();

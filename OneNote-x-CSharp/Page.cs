@@ -256,7 +256,16 @@ namespace OneNote_x_CSharp
         /// <returns>The full report for the page.</returns>
         public HtmlWriter FullReportHtml()
         {
-            return new HtmlWriter();
+            return new HtmlWriter("fullReport")
+                .AppendElement("p", "PageHeader", Name)
+                .OpenTag("ul", "PageInfoList")
+                    .AppendElement("li", "PageInfoDateItem", OriginalAssignmentDate.ToString("MM/dd/yyyy"))
+                    .AppendElement("li", "PageInfoTagItem", "Tag: " + TagName)
+                    .OpenTag("li", "PageInfoImageCountItem")
+                        .AppendText(Images.Count + " pages:")
+                        .OpenTag("ol", "PageInfoImageList")
+                            .AppendHtml(Images.Select(image => image.FullReportHtml()))
+                .CloseAllTags();
         }
 
         /// <summary>

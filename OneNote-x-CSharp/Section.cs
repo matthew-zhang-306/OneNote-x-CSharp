@@ -113,7 +113,9 @@ namespace OneNote_x_CSharp
         /// <returns>The full report for the section.</returns>
         public HtmlWriter FullReportHtml()
         {
-            return new HtmlWriter();
+            return new HtmlWriter("fullReport")
+                .AppendElement("p", "SectionHeader", Name)
+                .AppendElement("div", "PageItem", Pages.Select(page => page.FullReportHtml()));
         }
     }
 }
